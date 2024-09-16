@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            padding: 5px;
+        }
+        .terminal-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .terminal-button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .close { background-color: #f44; }
+        .minimize { background-color: #ff0; }
+        .maximize { background-color: #0f4; }
+        .terminal-title {
+            flex: 1;
+            color: #fff;
+            text-align: center;
+        }
+        .canvas-container {
+            border: 1px solid #000;
+            text-align:center;
+            float:left;  /* Para ajustar tamaño a contenido*/
+            background-color: #000;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- Terminal -->
+    <div class="canvas-container">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <div class="terminal-button close"></div>
+                <div class="terminal-button minimize"></div>
+                <div class="terminal-button maximize"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+        </div>
+        <canvas class="screen_area" id="id_cnv1" height="100" width="100" tabindex="0"></canvas>
+    </div>
+    <script src="term_ansi.js"></script>    
+    <script src="term_emu.js"></script>    
+    <script>
+        var term  = new TitoTermEmul("id_cnv1", termTxtReceived);
+        //Event for the terminal
+        function termTxtReceived(str) {
+            //Terminal has received a string (Normally a simple char).
+            term.send(str);     //We send back to the terminal because we don't have a shell process
+        }
+        //Send 
+        ////////////// Prueba de control de pantalla //////////////
+        term.send("\x1B[3;15fText in specific location(5,5)\n");
+//        term.send("\x1B[5;14f");
+//        term.send("\x1B[1J");
+//        term.send("\x1B[s");
+//        term.send("\x1B[u");
+
+        term.send("\x1B[0;4mUnderlined\n");
+        term.send("\x1B[0;1mText in bold\n");
+        term.send("\x1B[0;7mNegative\n");
+        
+        term.send("\x1B[0;90mBlack Text\n");
+        term.send("\x1B[0;91mRed text\n");
+        term.send("\x1B[0;92mGreen text\n");
+        term.send("\x1B[0;93mYellow text\n");
+        term.send("\x1B[0;94mBlue text\n");
+        term.send("\x1B[0;95mMagenta text\n");
+        term.send("\x1B[0;96mCyan text\n");
+        term.send("\x1B[0;97mWhite text\n");
+//
+//        response("\x1B[0;39mTexto en color normal\n");
+//
+//        response("\x1B[0;40mTexto con Fondo negro\n");
+//        response("\x1B[0;41mTexto con Fondo rojo\n");
+//        response("\x1B[0;42mTexto con Fondo verde\n");
+//        response("\x1B[0;43mTexto con Fondo amarillo\n");
+//        response("\x1B[0;44mTexto con Fondo azul\n");
+//        response("\x1B[0;45mTexto con Fondo magenta\n");
+//        response("\x1B[0;46mTexto con Fondo cian\n");
+//        response("\x1B[0;47mTexto con Fondo blanco\n");
+//
+//        response("\x1B[0;49mTexto con Fondo normal\n");
+//
+//        response("\x1B[38;2;190;130;0mTexto con color RGB\n");
+//
+//        response("\x1B[38;5;11mTexto con color de 8 bits\n");
+//        response("\x1B[48;5;3mTexto con fondo de 8 bits\n");
+//        response("\x1B[0m\x1B[38;5;21mTexto con color RGB de 8 bits\n");  //Azul
+//        response("\x1B[0m\x1B[38;5;46mTexto con color RGB de 8 bits\n");  //Verde
+//        response("\x1B[0m\x1B[38;5;196mTexto con color RGB de 8 bits\n");  //Rojo
+//
+        term.send("\x1B[0m\x1B[38;5;255m");  //Prepara para escala de grises
+        term.send("\x1B[48;5;232mGray text in 8 bits\n");
+        term.send("\x1B[48;5;236mGray text in 8 bits\n");
+        term.send("\x1B[48;5;240mGray text in 8 bits\n");
+        term.send("\x1B[48;5;244mGray text in 8 bits\n");
+        term.send("\x1B[48;5;248mGray text in 8 bits\n");
+        term.send("\x1B[48;5;252mGray text in 8 bits\n");        
+        //Refresh terminal
+        term.drawScreen();
+</script>
+    
+</body>
+</html>

@@ -1,5 +1,6 @@
 /* Define a una clase que permite reconocer secuencias de escape ANSI.
 Basado en: https://en.wikipedia.org/wiki/ANSI_escape_code
+Se crea como un archivo separado para que pueda ser usado también desde otros proyectos.
 Por Tito Hinostroza 20/08/2024 
 */
 
