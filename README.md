@@ -1,11 +1,7 @@
 # titoterm.js
 Web ANSI Terminal Emulator in Pure Javascript
 
-![terminal_image](https://github.com/t-edson/titoterm.js/blob/main/screen.png?raw=true)
-
-![screenshot](screen.png)
-
-<img src="screen.png" width="128"/>
+<img src="screen.png" />
 
 "titoterm.js" is a lightweight and efficient javascript library for creating terminals or command windows that can work on a Web page.
 
