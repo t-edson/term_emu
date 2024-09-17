@@ -1,7 +1,7 @@
 # titoterm.js
 Web ANSI Terminal Emulator in Pure Javascript
 
-![terminal_image](https://github.com/t-edson/titoterm.js/blob/main/screen.png)
+![terminal_image](https://github.com/t-edson/titoterm.js/blob/main/screen.png?raw=true)
 
 ![screenshot](screen.png)
 
