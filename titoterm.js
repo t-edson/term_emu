@@ -7,7 +7,7 @@ const TEXT_COLOR = "#00E800";       //Color de texto
 const BACK_COLOR = "#000000";       //Color de fondo
 const FONT_NORMAL = "14px monospace";   //Estilo de texto
 //Definición de la clase por su constructor
-function TitoTermEmul(idCanvas, txtReceived) {
+function TitoTerm(idCanvas, txtReceived) {
     ///////// Dimensiones del terminal
     const CHR_WIDTH = 8;    //Ancho del caracter
     const CHR_HEIGHT = 16;  //Alto del caracter
@@ -188,12 +188,13 @@ function TitoTermEmul(idCanvas, txtReceived) {
     function deleteChar(row, posx) {
         /* Elimina un caracter en la posición indicada */
         if (posx == NCOLS-1) {  //Último caracter
-            screen[row][NCOLS-1] = " ";
+            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor;
         } else if (posx < NCOLS-1) {  //Caracter intermedio
             for(var col=posx; col < NCOLS-1; col++) {  //Desplaza
                 screen[row][col] = screen[row][col+1];
             }
-            screen[row][NCOLS-1] = " ";     //Pone un espacio al final
+            //Pone un espacio al final
+            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor;
         }
     }
     function clearBuffer() {

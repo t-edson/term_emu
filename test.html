@@ -11,18 +11,6 @@
             background-color: #333;
             padding: 5px;
         }
-        .terminal-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        .terminal-button {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        .close { background-color: #f44; }
-        .minimize { background-color: #ff0; }
-        .maximize { background-color: #0f4; }
         .terminal-title {
             flex: 1;
             color: #fff;
@@ -31,7 +19,7 @@
         .canvas-container {
             border: 1px solid #000;
             text-align:center;
-            float:left;  /* Para ajustar tamaño a contenido*/
+            float:left;  
             background-color: #000;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -40,76 +28,100 @@
     </style>
 </head>
 <body>
-    <!-- Terminal -->
     <div class="canvas-container">
         <div class="terminal-header">
-            <div class="terminal-buttons">
-                <div class="terminal-button close"></div>
-                <div class="terminal-button minimize"></div>
-                <div class="terminal-button maximize"></div>
-            </div>
             <div class="terminal-title">Terminal</div>
         </div>
         <canvas class="screen_area" id="id_cnv1" height="100" width="100" tabindex="0"></canvas>
     </div>
-    <script src="term_ansi.js"></script>    
-    <script src="term_emu.js"></script>    
+
+    <script src="titoansi.js"></script>    
+    <script src="titoterm.js"></script>    
     <script>
-        var term  = new TitoTermEmul("id_cnv1", termTxtReceived);
+        var term  = new TitoTerm("id_cnv1", txtReceived);
         //Event for the terminal
-        function termTxtReceived(str) {
+        function txtReceived(str) {
             //Terminal has received a string (Normally a simple char).
             term.send(str);     //We send back to the terminal because we don't have a shell process
         }
         //Send 
-        ////////////// Prueba de control de pantalla //////////////
-        term.send("\x1B[3;15fText in specific location(5,5)\n");
-//        term.send("\x1B[5;14f");
-//        term.send("\x1B[1J");
-//        term.send("\x1B[s");
-//        term.send("\x1B[u");
 
-        term.send("\x1B[0;4mUnderlined\n");
-        term.send("\x1B[0;1mText in bold\n");
+        ////////////// Test //////////////
+        term.send("\x1B[2;10fText in specific location(2,10)\n");
+
+        term.send("\x1B[0;39mNormal text ");
+        term.send("\x1B[0;4mUnderlined ");
+        term.send("\x1B[0;1mText in bold ");
         term.send("\x1B[0;7mNegative\n");
-        
-        term.send("\x1B[0;90mBlack Text\n");
-        term.send("\x1B[0;91mRed text\n");
-        term.send("\x1B[0;92mGreen text\n");
-        term.send("\x1B[0;93mYellow text\n");
-        term.send("\x1B[0;94mBlue text\n");
-        term.send("\x1B[0;95mMagenta text\n");
-        term.send("\x1B[0;96mCyan text\n");
-        term.send("\x1B[0;97mWhite text\n");
-//
-//        response("\x1B[0;39mTexto en color normal\n");
-//
-//        response("\x1B[0;40mTexto con Fondo negro\n");
-//        response("\x1B[0;41mTexto con Fondo rojo\n");
-//        response("\x1B[0;42mTexto con Fondo verde\n");
-//        response("\x1B[0;43mTexto con Fondo amarillo\n");
-//        response("\x1B[0;44mTexto con Fondo azul\n");
-//        response("\x1B[0;45mTexto con Fondo magenta\n");
-//        response("\x1B[0;46mTexto con Fondo cian\n");
-//        response("\x1B[0;47mTexto con Fondo blanco\n");
-//
-//        response("\x1B[0;49mTexto con Fondo normal\n");
-//
-//        response("\x1B[38;2;190;130;0mTexto con color RGB\n");
-//
-//        response("\x1B[38;5;11mTexto con color de 8 bits\n");
-//        response("\x1B[48;5;3mTexto con fondo de 8 bits\n");
-//        response("\x1B[0m\x1B[38;5;21mTexto con color RGB de 8 bits\n");  //Azul
-//        response("\x1B[0m\x1B[38;5;46mTexto con color RGB de 8 bits\n");  //Verde
-//        response("\x1B[0m\x1B[38;5;196mTexto con color RGB de 8 bits\n");  //Rojo
-//
-        term.send("\x1B[0m\x1B[38;5;255m");  //Prepara para escala de grises
-        term.send("\x1B[48;5;232mGray text in 8 bits\n");
-        term.send("\x1B[48;5;236mGray text in 8 bits\n");
-        term.send("\x1B[48;5;240mGray text in 8 bits\n");
-        term.send("\x1B[48;5;244mGray text in 8 bits\n");
-        term.send("\x1B[48;5;248mGray text in 8 bits\n");
-        term.send("\x1B[48;5;252mGray text in 8 bits\n");        
+
+        term.send("\x1B[0;4m\t3 BITS COLORS\x1B[0m\n");
+
+        term.send("\x1B[0;40mBlack ");
+        term.send("\x1B[0;41mRed ");
+        term.send("\x1B[0;42mGreen ");
+        term.send("\x1B[0;43mYellow ");
+        term.send("\x1B[0;44mBlue ");
+        term.send("\x1B[0;45mMagenta ");
+        term.send("\x1B[0;46mCyan ");
+        term.send("\x1B[0;47mWhite \n");
+        term.send("\x1B[0;90mBlack ");
+        term.send("\x1B[0;91mRed ");
+        term.send("\x1B[0;92mGreen ");
+        term.send("\x1B[0;93mYellow ");
+        term.send("\x1B[0;94mBlue ");
+        term.send("\x1B[0;95mMagenta ");
+        term.send("\x1B[0;96mCyan ");
+        term.send("\x1B[0;97mWhite \n");
+
+        term.send("\x1B[0m");
+
+        term.send("\x1B[0;4m\t8 BITS COLORS\x1B[0m\n");
+
+        term.send("\x1B[38;5;15mStandard and Bright colors: \n");
+        term.send("\x1B[38;5;0mBlack ");
+        term.send("\x1B[38;5;1mRed ");
+        term.send("\x1B[38;5;2mGreen ");
+        term.send("\x1B[38;5;3mYellow ");
+        term.send("\x1B[38;5;4mBlue ");
+        term.send("\x1B[38;5;5mMagenta ");
+        term.send("\x1B[38;5;6mCyan ");
+        term.send("\x1B[38;5;7mWhite \n");
+
+        term.send("\x1B[38;5;8mBlack ");
+        term.send("\x1B[38;5;9mRed ");
+        term.send("\x1B[38;5;10mGreen ");
+        term.send("\x1B[38;5;11mYellow ");
+        term.send("\x1B[38;5;12mBlue ");
+        term.send("\x1B[38;5;13mMagenta ");
+        term.send("\x1B[38;5;14mCyan ");
+        term.send("\x1B[38;5;15mWhite \n");
+
+        term.send("\x1B[38;5;15mRGB text colors: \n");
+        term.send("\x1B[38;5;21m RGB blue ");  
+        term.send("\x1B[38;5;46m RGB green "); 
+        term.send("\x1B[38;5;196m RGB red \n");  
+
+        term.send("\x1B[0m");
+        term.send("\x1B[38;5;255mGray text:");
+        term.send("\x1B[48;5;232m Text");
+        term.send("\x1B[48;5;235m Text");
+        term.send("\x1B[48;5;238m Text");
+        term.send("\x1B[48;5;241m Text");
+        term.send("\x1B[48;5;244m Text");
+        term.send("\x1B[48;5;247m Text");        
+        term.send("\x1B[48;5;250m Text");        
+        term.send("\x1B[48;5;253m Text\n");
+
+        term.send("\x1B[0;4m\t24 BITS COLORS\x1B[0m\n");
+        term.send("\x1B[38;2;190;130;0mRGB text color\n");
+        for (let i = 0; i < 16777216; i+=66052) {
+            let r = i % 256;
+            let tmp = (i - r)/256;
+            let g = tmp % 256;
+            let b = (tmp - g)/256;
+            term.send("\x1B[48;2;" + r + ";" + g + ";" + b + "m ");
+        }
+        //Prompt
         term.send("\n\x1B[0m>>>");    //Restore 
         //Refresh terminal
         term.drawScreen();
