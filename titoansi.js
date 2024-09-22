@@ -39,14 +39,21 @@ Por Tito Hinostroza 20/08/2024
         }
         putchar(c) {
             /* Método que debe llamarse por cada tecla recibida cuando se está en modo de
-             escape */
+             escape.
+             Ref. https://bjh21.me.uk/all-escapes/all-escapes.txt  */
              this.escape_seq += c;
              let code = c.charCodeAt(0);
              if (this.escape_seq.length == 2) { //Segundo caracter
                  if (code>=0x30 && code<=0x3F) {  //Secuencia "Fp". 
+                    //Secuencias privadas 
                     this.escape_type = ESC_FP;    //Tipo "Fp"
-                     //Es una secuencia de 2 bytes. La terminamos.
-                     this.executeSeq(this.escape_type, this.escape_seq);
+                    if (c == "7" || c == "8") { //Comandos de VT100
+                        //Es una secuencia de 2 bytes. La terminamos.
+                        this.executeSeq(this.escape_type, this.escape_seq);
+                    } else {
+                        //Otra secuencia privada. No la reconocemos aún.
+                        this.executeSeq(this.escape_type, this.escape_seq);   //Reinicia secuencia
+                    }
                  //Casos especiales de "Fe".
                  } else if (c == "P") {  //"ESC P". 
                     this.escape_type = ESC_DCS;    

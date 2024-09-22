@@ -28,6 +28,7 @@ function TitoTerm(idCanvas, txtReceived) {
     let textColor = TEXT_COLOR;     //Color por defecto del texto
     let backColor = BACK_COLOR;     //Color por defecto del fondo
     let textNegat = "0";            //Sin negativo por defecto
+    let textItal = "0";             //Cursiva desactivada por defecto
     //Variables para secuencias de escape
     let escape_mode = 0;        //Bandera para el modo escape: 
                                 //  0->Normal; 1->Escape mode
@@ -69,6 +70,10 @@ function TitoTerm(idCanvas, txtReceived) {
         let under = car_attr.substr(2,1);   //Lee caracter de subrayado
         let txtcol = car_attr.substr(3,7);    //Color del texto #RRGGBB
         let bckcol = car_attr.substr(10,7);   //Color de fondo #RRGGBB
+        let italic = car_attr.substr(17,1);   //Caracter de cursiva
+        if (italic=="1") {    //Ve si hay caracter de cursiva.
+            textStyle = 'italic ' + textStyle;
+        }
         ////////// Dibuja caracter con atributos leídos.
         const xchr = col*CHR_WIDTH;
         const ychr = row*CHR_HEIGHT;
@@ -107,8 +112,9 @@ function TitoTerm(idCanvas, txtReceived) {
         }
     };
     ///////// Manejo del cursor
-    let cntCursor = 0;  //Contador para el temporizador
+    let cntCursor = 0;      //Contador para el temporizador
     let cursorOff = true;   //Bandera para controlar el parpadeo del cursor
+    let curTimer = 0;       //Referencia a temporizador
     //Coordenada donde se dibuja el cursor, y donde debe refrescarse al moverlo.
     let curX = 0        
     let curY = 0       
@@ -150,10 +156,10 @@ function TitoTerm(idCanvas, txtReceived) {
         }
     }
     function initCursor() {
-        /** Inicia el cursor para que trabaje normalmente */
+        /** Inicia el cursor para que parpadee normalmente */
         cursorOff = true;   //Inicia como cursor apagado.
         cntCursor = 0;      //Inicia contador
-        setInterval(ticCursor, 200);
+        curTimer = setInterval(ticCursor, 200);
         blinkCursor();
     }
     function showCursor() {
@@ -170,6 +176,11 @@ function TitoTerm(idCanvas, txtReceived) {
             cntCursor = 0;    //Reinicia temporización
         }
     }
+    function stopCursor() {
+        /* Detiene el parpadeo del cursor */
+        hideCursor();   //Aseguramos que está apagado
+        clearInterval(curTimer);    //Detenemos el parpadeo
+    }
     ///////// Escritura en memoria
     var crow = 0;   // Posición actual del cursor
     var ccol = 0;   // Posición actual del cursor
@@ -182,19 +193,19 @@ function TitoTerm(idCanvas, txtReceived) {
         for(var col=0; col < NCOLS; col++) {
             /*Se escriben espacios y atributos de texto, en una sola cadena de
             caracteres */
-            screen[row][col] = " " + textBold + textUnder + textColor + backColor;
+            screen[row][col] = " " + textBold + textUnder + textColor + backColor + textItal;
         }
     }
     function deleteChar(row, posx) {
         /* Elimina un caracter en la posición indicada */
         if (posx == NCOLS-1) {  //Último caracter
-            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor;
+            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor + textItal;
         } else if (posx < NCOLS-1) {  //Caracter intermedio
             for(var col=posx; col < NCOLS-1; col++) {  //Desplaza
                 screen[row][col] = screen[row][col+1];
             }
             //Pone un espacio al final
-            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor;
+            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor + textItal;
         }
     }
     function clearBuffer() {
@@ -323,13 +334,16 @@ function TitoTerm(idCanvas, txtReceived) {
                 textUnder = "0";          //Subrayado desactivado por defecto.
                 textColor = TEXT_COLOR;     //Color por defecto del texto
                 backColor = BACK_COLOR;     //Color por defecto del fondo
+                textItal = "0";
                 textNegat = "0";
             } else if (com=="1") {	//Negrita/Brillo 
                 textBold = "1";           
             } else if (com=="22") {	//Sin negrita/Brillo 
                 textBold = "0";  
-            } else if (com=="3") {	//Cursiva. No soportado. Se asume negrita.
-                textBold = "1"; 
+            } else if (com=="3") {	//Cursiva. 
+                textItal = "1"; 
+            } else if (com=="23") {	//Sin Cursiva. 
+                textItal = "0"; 
             } else if (com=="4") {	//Subrayado 
                 textUnder = "1";
             } else if (com=="24") {	//Sin subrayado 
@@ -471,7 +485,7 @@ function TitoTerm(idCanvas, txtReceived) {
                 let comstr = escape_seq.substr(2, escape_seq.length-3);
                 if (comstr=="0") {   //Borra desde el cursor al final
                     for(let col=ccol; col < NCOLS; col++) {
-                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor;
+                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor + textItal;
                     }
                     for(var row=crow+1; row < screen.length; row++) {
                         clearLine(row);
@@ -481,7 +495,7 @@ function TitoTerm(idCanvas, txtReceived) {
                         clearLine(row);
                     }
                     for(let col=0; col < ccol; col++) {
-                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor;
+                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor + textItal;
                     }
                 } else {    //Borra toda la pantalla
                     clearBuffer();
@@ -490,11 +504,11 @@ function TitoTerm(idCanvas, txtReceived) {
                 let comstr = escape_seq.substr(2, escape_seq.length-3);
                 if (comstr=="0") {   //Borra desde el cursor al final
                     for(let col=ccol; col < NCOLS; col++) {
-                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor;
+                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor + textItal;
                     }
                 } else if (comstr=="1") {   //Borra desde el cursor al inicio
                     for(let col=0; col < ccol; col++) {
-                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor;
+                        screen[crow][col] = " " + textBold + textUnder + textColor + backColor + textItal;
                     }
                 } else {    //Borra toda la pantalla
                     clearLine(crow);
@@ -532,9 +546,25 @@ function TitoTerm(idCanvas, txtReceived) {
                 } else {    //Debe ser el modo normal
                     CSITextFormat(coms);
                 }
+            //Algunas secuencias privadas
+            } else if (escape_seq == "\x1B[?25h") {   //Muestra cursor
+                initCursor();
+            } else if (escape_seq == "\x1B[?25l") {   //Oculta cursor
+                stopCursor();
             } else{
                 console.log("Secuencia CSI no implementada");
             }
+        } else if (escape_type == ESC_FP) {   //Secuencias privadas
+//            if (escape_seq == "\x1B7") {    //Guarda cursor y atributos
+//
+//            } else if (escape_seq == "\x1B8") {     //Restaura cursor y atributos
+//
+//            } else if (escape_seq == "\x1B?25h") {   //Muestra cursor
+//                initCursor();
+//            } else if (escape_seq == "\x1B?25l") {   //Oculta cursor
+//                stopCursor();
+//            } 
+            console.log("Secuencia no implementada");
         } else {
             console.log("Secuencia no implementada");
         }
@@ -563,9 +593,9 @@ function TitoTerm(idCanvas, txtReceived) {
             } else {  //Caracter común. Lo escribimos en pantalla.
                 //Escribe con el valor actual de los atributos
                 if (textNegat=="1") {
-                    screen[crow][ccol] = c + textBold + textUnder + backColor + textColor;
+                    screen[crow][ccol] = c + textBold + textUnder + backColor + textColor + textItal;
                 } else {
-                    screen[crow][ccol] = c + textBold + textUnder + textColor + backColor;
+                    screen[crow][ccol] = c + textBold + textUnder + textColor + backColor + textItal;
                 }
                 next();
             }
