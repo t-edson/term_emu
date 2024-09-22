@@ -405,6 +405,8 @@ function TitoTerm(idCanvas, txtReceived) {
             if (escape_seq == "\x1B[P") {      //Eliminar caracter a la izquierda
                 cursor_left();
                 deleteChar(crow, ccol);
+            } else if (escape_seq == "\x1B[6n") {   //Pide posición del cursor
+                txtReceived("\x1B["+(crow+1)+";"+(ccol+1)+"R");    //Devuelve coordenadas en cadena
             } else if (delim == "A") {   //Cursor arriba "\x1B[nA"
                 let comstr = escape_seq.substr(2, escape_seq.length-3);
                 let n = comstr==""?1:Number(comstr);
@@ -425,10 +427,6 @@ function TitoTerm(idCanvas, txtReceived) {
                 let n = comstr==""?1:Number(comstr);
                 ccol -= n;
                 if (ccol <= 0) ccol = 0;
-//            } else if (escape_seq == "\x1B[C") {   //Cursor a la derecha
-//                cursor_right();
-//            } else if (escape_seq == "\x1B[D") {   //Cursor a la izquierda
-//                cursor_left();
             } else if (delim == "E") {   //Cursor al inicio de n lineas adelante
                 let comstr = escape_seq.substr(2, escape_seq.length-3);
                 let n = comstr==""?1:Number(comstr);
@@ -501,6 +499,28 @@ function TitoTerm(idCanvas, txtReceived) {
                 } else {    //Borra toda la pantalla
                     clearLine(crow);
                 };
+            } else if (delim == "S") {   //Desplaza página, "n" líneas arriba: ESC[<n>S
+                let comstr = escape_seq.substr(2, escape_seq.length-3);
+                if (comstr=="") comstr = 1;
+                //Desplaza
+                for (let row = 0; row < NROWS-comstr; row++) {
+                    copyLine(row+comstr, row);
+                }
+                //Limpia las líneas finales
+                for (let row = NROWS-comstr; row < NROWS; row++) {
+                    clearLine(crow);
+                }
+            } else if (delim == "T") {   //Desplaza página, "n" líneas abajo: ESC[<n>T
+                let comstr = escape_seq.substr(2, escape_seq.length-3);
+                if (comstr=="") comstr = 1;
+                //Desplaza
+                for (let row = NROWS-1; row >= comstr; row--) {
+                    copyLine(row-comstr, row);
+                }
+                //Limpia las líneas iniciales
+                for (let row = 0; row < comstr; row++) {
+                    clearLine(row);
+                }
             } else if (delim == "m") {   //Formato de texto
                 //Basado en https://learn.microsoft.com/es-es/windows/console/console-virtual-terminal-sequences
                 //Se toman los mismos colores del Putty.
