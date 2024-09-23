@@ -42,87 +42,88 @@
         //Event for the terminal
         function txtReceived(str) {
             //Terminal has received a string (Normally a simple char).
-            term.send(str);     //We send back to the terminal because we don't have a shell process
+            term.write(str);     //We send back to the terminal because we don't have a shell process
         }
         //Send 
 
         ////////////// Test //////////////
-        term.send("\x1B[2;10fText in specific location(2,10)\n");
+        term.write("\x1B[2;10fText in specific location(2,10)\n");
 
-        term.send("\x1B[0;39mNormal text ");
-        term.send("\x1B[0;4mUnderlined ");
-        term.send("\x1B[0;1mText in bold ");
-        term.send("\x1B[0;7mNegative\n");
+        term.write("\x1B[0;39mNormal text ");
+        term.write("\x1B[0;4mUnderlined ");
+        term.write("\x1B[0;1mText in bold ");
+        term.write("\x1B[0;3mText in italic ");
+        term.write("\x1B[0;7mNegative\n");
 
-        term.send("\x1B[0;4m\t3 BITS COLORS\x1B[0m\n");
+        term.write("\x1B[0;4m\t3 BITS COLORS\x1B[0m\n");
 
-        term.send("\x1B[0;40mBlack ");
-        term.send("\x1B[0;41mRed ");
-        term.send("\x1B[0;42mGreen ");
-        term.send("\x1B[0;43mYellow ");
-        term.send("\x1B[0;44mBlue ");
-        term.send("\x1B[0;45mMagenta ");
-        term.send("\x1B[0;46mCyan ");
-        term.send("\x1B[0;47mWhite \n");
-        term.send("\x1B[0;90mBlack ");
-        term.send("\x1B[0;91mRed ");
-        term.send("\x1B[0;92mGreen ");
-        term.send("\x1B[0;93mYellow ");
-        term.send("\x1B[0;94mBlue ");
-        term.send("\x1B[0;95mMagenta ");
-        term.send("\x1B[0;96mCyan ");
-        term.send("\x1B[0;97mWhite \n");
+        term.write("\x1B[0;40mBlack ");
+        term.write("\x1B[0;41mRed ");
+        term.write("\x1B[0;42mGreen ");
+        term.write("\x1B[0;43mYellow ");
+        term.write("\x1B[0;44mBlue ");
+        term.write("\x1B[0;45mMagenta ");
+        term.write("\x1B[0;46mCyan ");
+        term.write("\x1B[0;47mWhite \n");
+        term.write("\x1B[0;90mBlack ");
+        term.write("\x1B[0;91mRed ");
+        term.write("\x1B[0;92mGreen ");
+        term.write("\x1B[0;93mYellow ");
+        term.write("\x1B[0;94mBlue ");
+        term.write("\x1B[0;95mMagenta ");
+        term.write("\x1B[0;96mCyan ");
+        term.write("\x1B[0;97mWhite \n");
 
-        term.send("\x1B[0m");
+        term.write("\x1B[0m");
 
-        term.send("\x1B[0;4m\t8 BITS COLORS\x1B[0m\n");
+        term.write("\x1B[0;4m\t8 BITS COLORS\x1B[0m\n");
 
-        term.send("\x1B[38;5;15mStandard and Bright colors: \n");
-        term.send("\x1B[38;5;0mBlack ");
-        term.send("\x1B[38;5;1mRed ");
-        term.send("\x1B[38;5;2mGreen ");
-        term.send("\x1B[38;5;3mYellow ");
-        term.send("\x1B[38;5;4mBlue ");
-        term.send("\x1B[38;5;5mMagenta ");
-        term.send("\x1B[38;5;6mCyan ");
-        term.send("\x1B[38;5;7mWhite \n");
+        term.write("\x1B[38;5;15mStandard and Bright colors: \n");
+        term.write("\x1B[38;5;0mBlack ");
+        term.write("\x1B[38;5;1mRed ");
+        term.write("\x1B[38;5;2mGreen ");
+        term.write("\x1B[38;5;3mYellow ");
+        term.write("\x1B[38;5;4mBlue ");
+        term.write("\x1B[38;5;5mMagenta ");
+        term.write("\x1B[38;5;6mCyan ");
+        term.write("\x1B[38;5;7mWhite \n");
 
-        term.send("\x1B[38;5;8mBlack ");
-        term.send("\x1B[38;5;9mRed ");
-        term.send("\x1B[38;5;10mGreen ");
-        term.send("\x1B[38;5;11mYellow ");
-        term.send("\x1B[38;5;12mBlue ");
-        term.send("\x1B[38;5;13mMagenta ");
-        term.send("\x1B[38;5;14mCyan ");
-        term.send("\x1B[38;5;15mWhite \n");
+        term.write("\x1B[38;5;8mBlack ");
+        term.write("\x1B[38;5;9mRed ");
+        term.write("\x1B[38;5;10mGreen ");
+        term.write("\x1B[38;5;11mYellow ");
+        term.write("\x1B[38;5;12mBlue ");
+        term.write("\x1B[38;5;13mMagenta ");
+        term.write("\x1B[38;5;14mCyan ");
+        term.write("\x1B[38;5;15mWhite \n");
 
-        term.send("\x1B[38;5;15mRGB text colors: \n");
-        term.send("\x1B[38;5;21m RGB blue ");  
-        term.send("\x1B[38;5;46m RGB green "); 
-        term.send("\x1B[38;5;196m RGB red \n");  
+        term.write("\x1B[38;5;15mRGB text colors: \n");
+        term.write("\x1B[38;5;21m RGB blue ");  
+        term.write("\x1B[38;5;46m RGB green "); 
+        term.write("\x1B[38;5;196m RGB red \n");  
 
-        term.send("\x1B[0m");
-        term.send("\x1B[38;5;255mGray text:");
-        term.send("\x1B[48;5;232m Text");
-        term.send("\x1B[48;5;235m Text");
-        term.send("\x1B[48;5;238m Text");
-        term.send("\x1B[48;5;241m Text");
-        term.send("\x1B[48;5;244m Text");
-        term.send("\x1B[48;5;247m Text");        
-        term.send("\x1B[48;5;250m Text");        
-        term.send("\x1B[48;5;253m Text\n");
+        term.write("\x1B[0m");
+        term.write("\x1B[38;5;255mGray text:");
+        term.write("\x1B[48;5;232m Text");
+        term.write("\x1B[48;5;235m Text");
+        term.write("\x1B[48;5;238m Text");
+        term.write("\x1B[48;5;241m Text");
+        term.write("\x1B[48;5;244m Text");
+        term.write("\x1B[48;5;247m Text");        
+        term.write("\x1B[48;5;250m Text");        
+        term.write("\x1B[48;5;253m Text\n");
 
-        term.send("\x1B[0;4m\t24 BITS COLORS\x1B[0m\n");
-        term.send("\x1B[38;2;190;130;0mRGB text color\n");
+        term.write("\x1B[0;4m\t24 BITS COLORS\x1B[0m\n");
+        term.write("\x1B[38;2;190;130;0mRGB text color\n");
         for (let i = 0; i < 16777216; i+=66052) {
             let r = i % 256;
             let tmp = (i - r)/256;
             let g = tmp % 256;
             let b = (tmp - g)/256;
-            term.send("\x1B[48;2;" + r + ";" + g + ";" + b + "m ");
+            term.write("\x1B[48;2;" + r + ";" + g + ";" + b + "m ");
         }
         //Prompt
-        term.send("\n\x1B[0m>>>");    //Restore 
+        term.write("\n\x1B[0m>>>");    //Restore 
         //Refresh terminal
         term.drawScreen();
 </script>

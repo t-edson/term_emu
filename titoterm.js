@@ -34,9 +34,9 @@ function TitoTerm(idCanvas, txtReceived) {
                                 //  0->Normal; 1->Escape mode
     let ansi = new CAnsiEscape(executeSeq); //Lexer para secuencias ANSI.
     //Métodos
+    this.putstring  = function(str) {putstring(str)};
     this.write      = function(str) {write(str)};
     this.writeln    = function(str) {writeln(str)};
-    this.send       = function(str) {send(str)};
     this.drawScreen = function () {drawScreen()};
     ///////// Refresco de pantalla
     const ctx = canvas.getContext("2d");  //Contexto principal del dibujo
@@ -603,25 +603,21 @@ function TitoTerm(idCanvas, txtReceived) {
             ansi.putchar(c);    //Lo procesa el lexer
         }
     }
-    function write(str) {
+    function putstring(str) {
     /* Escribe una cadena de texto en pantalla */
         for (let i = 0; i < str.length; i++) {
             putchar(str[i]);
         }    
     };
-    function writeln(str) {
-    /* Escribe una línea de texto en pantalla incluyendo un salto de línea al final*/
-        write(str + "\n");
-    };
     ///////// Manejo del terminal
-    function send(str) {
+    function write(str) {
         /** Envía una cadena al terminal */
         // Agrega lógica para manejar la tecla presionada
         scrolled = false;
         rowChanged = false;
         hideCursor();  //Apaga el cursor porque vamos a dibujar encima
         //Escribe en memoria
-        write(str);
+        putstring(str);
         //Refresca pantalla
         ctx.fillStyle = TEXT_COLOR;
         if (scrolled || rowChanged) { 
@@ -632,6 +628,10 @@ function TitoTerm(idCanvas, txtReceived) {
         }
         showCursor();
     }
+    function writeln(str) {
+        /* Escribe una línea de texto en pantalla incluyendo un salto de línea al final*/
+        write(str + "\n");
+    };
     function handleKeyDown(event) {
         /* Procesa la pulsación de una tecla en el terminal. */
 //        console.log('Key pressed:', event.key, "-", event.keyCode);

@@ -29,7 +29,7 @@ And create an instance of the TitoTerm element:
 ```
 <script>
     var term = new TitoTerm("id_cnv1");
-    term.send("\x1B[0;91m Hello world!\n");    
+    term.write("\x1B[0;91m Hello world!\n");    
     term.drawScreen();
 </script>
 ```
@@ -42,7 +42,7 @@ To intercept keys received by the terminal, the "txtReceived" event must be impl
 
         function txtReceived(str) {
             //Terminal has received a string (Normally a simple char).
-            term.send(str);     //We send back to the terminal.
+            term.write(str);     //We send back to the terminal.
         }
 
         term.drawScreen();
