@@ -412,7 +412,7 @@ function TitoTerm(idCanvas, txtReceived) {
     function executeSeq(escape_type, escape_seq) {
         /* Ejecuta la secuencia de escape capturada e inicia el procesamiento de una
         nueva secuencia */
-        if (escape_type == ESC_UND) {     //Secuencias "Fs"
+        if (escape_type == ESC_UND) {     //Secuencia no identificada
             console.log("Secuencia no identificada");
         } else if (escape_type == ESC_CSI) {  //Secuencias "CSI"
             let delim = escape_seq.substr(-1); 
@@ -559,10 +559,6 @@ function TitoTerm(idCanvas, txtReceived) {
 //
 //            } else if (escape_seq == "\x1B8") {     //Restaura cursor y atributos
 //
-//            } else if (escape_seq == "\x1B?25h") {   //Muestra cursor
-//                initCursor();
-//            } else if (escape_seq == "\x1B?25l") {   //Oculta cursor
-//                stopCursor();
 //            } 
             console.log("Secuencia no implementada");
         } else {
@@ -672,6 +668,7 @@ function TitoTerm(idCanvas, txtReceived) {
         } else if (event.key=='Home') {return;
         } else if (event.key=='End') {return;
         } else if (event.key=='Meta') {return;  //Tecla Windows
+        } else if (event.key=='Escape') {return;  //Tecla Windows
         } else if (event.key=='ArrowLeft') {
             strrec = "\x1B[D"
         } else if (event.key=='ArrowRight') {
