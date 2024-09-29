@@ -115,6 +115,7 @@ function TitoTerm(idCanvas, txtReceived) {
     let cntCursor = 0;      //Contador para el temporizador
     let cursorOff = true;   //Bandera para controlar el parpadeo del cursor
     let curTimer = 0;       //Referencia a temporizador
+    let curType  = 0;       //Forma del cursor: 0->Bloque  1->Subrayado  2->Barra
     //Coordenada donde se dibuja el cursor, y donde debe refrescarse al moverlo.
     let curX = 0        
     let curY = 0       
@@ -126,7 +127,13 @@ function TitoTerm(idCanvas, txtReceived) {
             curX = ccol;
             curY = crow;
             ctx.fillStyle = TEXT_COLOR;
-            ctx.fillRect(curX*CHR_WIDTH, curY*CHR_HEIGHT-2, CHR_WIDTH, CHR_HEIGHT);
+            if (curType == 0) {    //Bloque 
+                ctx.fillRect(curX*CHR_WIDTH, curY*CHR_HEIGHT-2, CHR_WIDTH, CHR_HEIGHT);
+            } else if (curType==1) {   //Subrayado
+                ctx.fillRect(curX*CHR_WIDTH, (curY+1)*CHR_HEIGHT-4, CHR_WIDTH, 2);
+            } else if (curType==2) {   //Barra 
+                ctx.fillRect(curX*CHR_WIDTH, curY*CHR_HEIGHT-2, 2, CHR_HEIGHT);
+            }
     }
     function clearCursor() {
         /** Borra el cursor en la posición en donde se dibujó. */
@@ -181,6 +188,11 @@ function TitoTerm(idCanvas, txtReceived) {
         hideCursor();   //Aseguramos que está apagado
         clearInterval(curTimer);    //Detenemos el parpadeo
     }
+    function stopCursorOn() {
+        /* Detiene el parpadeo del cursor dejándolo visible*/
+        showCursor();   //Aseguramos que está encendido
+        clearInterval(curTimer);    //Detenemos el parpadeo
+    }
     ///////// Escritura en memoria
     var crow = 0;   // Posición actual del cursor
     var ccol = 0;   // Posición actual del cursor
@@ -206,6 +218,33 @@ function TitoTerm(idCanvas, txtReceived) {
             }
             //Pone un espacio al final
             screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor + textItal;
+        }
+    }
+    function insertChar(row, posx) {
+        /* Inserta un caracter en la posición indicada */
+        if (posx == NCOLS-1) {  //Último caracter
+            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor + textItal;
+        } else if (posx < NCOLS-1) {  //Caracter intermedio
+            for(var col=NCOLS-1; col>posx; col--) {  //Desplaza
+                screen[row][col] = screen[row][col-1];
+            }
+            //Pone un espacio en la posición actual
+            screen[row][posx] =  " " + textBold + textUnder + textColor + backColor + textItal;
+        }
+    }
+    function insertCharN(row, posx, n) {
+        /* Inserta "n" caracteres en la posición indicada */
+        if (posx+n>NCOLS-1) n = NCOLS-1-posx;
+        if (posx == NCOLS-1) {  //Último caracter
+            screen[row][NCOLS-1] =  " " + textBold + textUnder + textColor + backColor + textItal;
+        } else if (posx < NCOLS-1) {  //Caracter intermedio
+            for(var col=NCOLS-1; col>=posx+n; col--) {  //Desplaza
+                screen[row][col] = screen[row][col-n];
+            }
+            //Pone espacios en la posición actual
+            for (let i = 0; i < n; i++) {
+                screen[row][posx+i] =  " " + textBold + textUnder + textColor + backColor + textItal;
+            } 
         }
     }
     function clearBuffer() {
@@ -421,6 +460,10 @@ function TitoTerm(idCanvas, txtReceived) {
                 deleteChar(crow, ccol);
             } else if (escape_seq == "\x1B[6n") {   //Pide posición del cursor
                 txtReceived("\x1B["+(crow+1)+";"+(ccol+1)+"R");    //Devuelve coordenadas en cadena
+            } else if (delim == "@") {   //Inserta <n> espacios "\x1B[<n>@"
+                let comstr = escape_seq.substr(2, escape_seq.length-3);
+                let n = comstr==""?1:Number(comstr);
+                insertCharN(crow, ccol, n);
             } else if (delim == "A") {   //Cursor arriba "\x1B[nA"
                 let comstr = escape_seq.substr(2, escape_seq.length-3);
                 let n = comstr==""?1:Number(comstr);
@@ -535,6 +578,14 @@ function TitoTerm(idCanvas, txtReceived) {
                 for (let row = 0; row < comstr; row++) {
                     clearLine(row);
                 }
+            } else if (delim == "d") {   //Posiciona Cursor verticalmente: ESC[<r>d
+                let comstr = escape_seq.substr(2, escape_seq.length-3);
+                if (comstr=="") {   //Si no se especifica, a la primera fila y columna.
+                    crow = 0;
+                } else {
+                    crow = comstr-1; 
+                    if (crow<0) crow = 0;
+                };
             } else if (delim == "m") {   //Formato de texto
                 //Basado en https://learn.microsoft.com/es-es/windows/console/console-virtual-terminal-sequences
                 //Se toman los mismos colores del Putty.
@@ -547,19 +598,43 @@ function TitoTerm(idCanvas, txtReceived) {
                     CSITextFormat(coms);
                 }
             //Algunas secuencias privadas
+            } else if (escape_seq == "\x1B[?12h") {   //Habilita parpadeo del cursor
+                initCursor();
+            } else if (escape_seq == "\x1B[?12l") {   //Deshabilita parpadeo del cursor
+                clearInterval(curTimer);    
             } else if (escape_seq == "\x1B[?25h") {   //Muestra cursor
                 initCursor();
             } else if (escape_seq == "\x1B[?25l") {   //Oculta cursor
                 stopCursor();
+            } else if (delim == "q") {   //Cursor de bloque parpadeante
+                let comstr = escape_seq.substr(2, escape_seq.length-3);
+                if (comstr == "?1 ") {   //Cursor de bloque parpadeante
+                    curType = 0;
+                } else if (comstr == "?2 ") {   //Cursor de bloque estable
+                    curType = 0;
+                    stopCursorOn();
+                } else if (comstr == "?3 ") {   //Cursor de subrayado parpadeante
+                    curType = 1;
+                } else if (comstr == "?4 ") {   //Cursor de subrayado estable
+                    curType = 1;
+                    stopCursorOn();
+                } else if (comstr == "?5 ") {   //Cursor de barra parpadeante
+                    curType = 2;
+                } else if (comstr == "?6 ") {   //Cursor de barra estable
+                    curType = 2;
+                    stopCursorOn();
+                }
             } else{
                 console.log("Secuencia CSI no implementada");
             }
         } else if (escape_type == ESC_FP) {   //Secuencias privadas
-//            if (escape_seq == "\x1B7") {    //Guarda cursor y atributos
-//
-//            } else if (escape_seq == "\x1B8") {     //Restaura cursor y atributos
-//
-//            } 
+            if (escape_seq == "\x1B7") {    //Guarda cursor y atributos
+                crow_tmp = crow;
+                ccol_tmp = ccol;
+            } else if (escape_seq == "\x1B8") {     //Restaura cursor y atributos
+                crow = crow_tmp;
+                ccol = ccol_tmp;
+            } 
             console.log("Secuencia no implementada");
         } else {
             console.log("Secuencia no implementada");
@@ -630,7 +705,7 @@ function TitoTerm(idCanvas, txtReceived) {
     };
     function handleKeyDown(event) {
         /* Procesa la pulsación de una tecla en el terminal. */
-//        console.log('Key pressed:', event.key, "-", event.keyCode);
+        console.log('Key pressed:', event.key, "-", event.keyCode);
         /* Captura algunas teclas problemáticas para que no pasen al navegador y
         ejecuten alguna acción no deseada. */
         if (event.code === 'Space') event.preventDefault();
@@ -639,6 +714,15 @@ function TitoTerm(idCanvas, txtReceived) {
         if (event.key =='ArrowRight') event.preventDefault();
         if (event.key =='ArrowDown') event.preventDefault();
         if (event.key =='ArrowUp') event.preventDefault();
+        if (event.key =='F1') event.preventDefault();
+        if (event.key =='F2') event.preventDefault();
+        if (event.key =='F3') event.preventDefault();
+        if (event.key =='F4') event.preventDefault();
+        //if (event.key =='F5') event.preventDefault();
+        if (event.key =='F6') event.preventDefault();
+        if (event.key =='F7') event.preventDefault();
+        if (event.key =='F8') event.preventDefault();
+        if (event.key =='F9') event.preventDefault();
         if (event.ctrlKey) {
             if ( event.key === 'a') event.preventDefault();
             if ( event.key === 'd') event.preventDefault();
@@ -669,6 +753,15 @@ function TitoTerm(idCanvas, txtReceived) {
         } else if (event.key=='End') {return;
         } else if (event.key=='Meta') {return;  //Tecla Windows
         } else if (event.key=='Escape') {return;  //Tecla Windows
+        } else if (event.key=='F1') {return;  //Tecla Windows
+        } else if (event.key=='F2') {return;  //Tecla Windows
+        } else if (event.key=='F3') {return;  //Tecla Windows
+        } else if (event.key=='F4') {return;  //Tecla Windows
+        } else if (event.key=='F5') {return;  //Tecla Windows
+        } else if (event.key=='F6') {return;  //Tecla Windows
+        } else if (event.key=='F7') {return;  //Tecla Windows
+        } else if (event.key=='F8') {return;  //Tecla Windows
+        } else if (event.key=='F9') {return;  //Tecla Windows
         } else if (event.key=='ArrowLeft') {
             strrec = "\x1B[D"
         } else if (event.key=='ArrowRight') {
