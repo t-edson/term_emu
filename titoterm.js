@@ -606,7 +606,7 @@ function TitoTerm(idCanvas, txtReceived) {
                 initCursor();
             } else if (escape_seq == "\x1B[?25l") {   //Oculta cursor
                 stopCursor();
-            } else if (delim == "q") {   //Cursor de bloque parpadeante
+            } else if (delim == "q") {   //Comandos de Cursor
                 let comstr = escape_seq.substr(2, escape_seq.length-3);
                 if (comstr == "?1 ") {   //Cursor de bloque parpadeante
                     curType = 0;
@@ -705,7 +705,7 @@ function TitoTerm(idCanvas, txtReceived) {
     };
     function handleKeyDown(event) {
         /* Procesa la pulsación de una tecla en el terminal. */
-        console.log('Key pressed:', event.key, "-", event.keyCode);
+        //console.log('Key pressed:', event.key, "-", event.keyCode);
         /* Captura algunas teclas problemáticas para que no pasen al navegador y
         ejecuten alguna acción no deseada. */
         if (event.code === 'Space') event.preventDefault();
@@ -745,8 +745,6 @@ function TitoTerm(idCanvas, txtReceived) {
         } else if (event.key=='Shift') {return;
         } else if (event.key=='CapsLock') {return;
         } else if (event.key=='NumLock') {return;
-        } else if (event.key=='Insert') {return;
-        } else if (event.key=='Delete') {return;
         } else if (event.key=='PageUp') {return;
         } else if (event.key=='PageDown') {return;
         } else if (event.key=='Home') {return;
@@ -762,6 +760,10 @@ function TitoTerm(idCanvas, txtReceived) {
         } else if (event.key=='F7') {return;  //Tecla Windows
         } else if (event.key=='F8') {return;  //Tecla Windows
         } else if (event.key=='F9') {return;  //Tecla Windows
+        } else if (event.key=='Insert') {
+            strrec = "\x1B[2~"
+        } else if (event.key=='Delete') {
+            strrec = "\x1B[3~"
         } else if (event.key=='ArrowLeft') {
             strrec = "\x1B[D"
         } else if (event.key=='ArrowRight') {
